@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #4b545c;
+        }
+        .sidebar-header h3 {
+            margin: 0;
+            color: #fff;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .sidebar-menu li {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .sidebar-menu li:hover {
+            background-color: #495057;
+        }
+        .sidebar-menu li.active {
+            background-color: #007bff;
+        }
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h2 {
+            color: #343a40;
+            margin: 0;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .attendance-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .attendance-card h3 {
+            margin-top: 0;
+            color: #343a40;
+        }
+        .attendance-status {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .status-item {
+            text-align: center;
+        }
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .status-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .attendance-action {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .action-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .checkin-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .checkin-btn:hover {
+            background-color: #218838;
+        }
+        .checkout-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .checkout-btn:hover {
+            background-color: #c82333;
+        }
+        .disabled-btn {
+            background-color: #6c757d;
+            color: white;
+            cursor: not-allowed;
+        }
+        .attendance-history {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        .success-message {
+            color: #28a745;
+            margin: 15px 0;
+        }
+        .error-message {
+            color: #dc3545;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Attendance System</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#">Dashboard</a></li>
+                <li><a href="#">My Attendance</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Employee Dashboard</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span th:text="${employee.name}"></span>
+                </div>
+            </div>
+
+            <div class="attendance-card">
+                <h3>Today's Attendance</h3>
+                
+                <div class="attendance-status">
+                    <div class="status-item">
+                        <div class="status-value" th:text="${currentMonthPresentDays}">0</div>
+                        <div class="status-label">Present Days</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" th:text="${currentMonthAbsentDays}">0</div>
+                        <div class="status-label">Absent Days</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" th:text="${currentMonthLateDays}">0</div>
+                        <div class="status-label">Late Days</div>
+                    </div>
+                </div>
+
+                <div th:if="${todayAttendance == null}">
+                    <div class="attendance-action">
+                        <form action="/employee/check-in" method="post">
+                            <input type="hidden" id="latitude" name="latitude">
+                            <input type="hidden" id="longitude" name="longitude">
+                            <button type="button" onclick="getLocation()" class="action-btn checkin-btn">Check In</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div th:unless="${todayAttendance == null}">
+                    <div class="attendance-action">
+                        <p>Checked in at: <span th:text="${#temporals.format(todayAttendance.checkIn, 'hh:mm a')}"></span></p>
+                        <form action="/employee/check-out" method="post">
+                            <button type="submit" class="action-btn checkout-btn">Check Out</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div th:if="${param.success}" class="success-message" th:text="${param.success}"></div>
+                <div th:if="${param.error}" class="error-message" th:text="${param.error}"></div>
+            </div>
+
+            <div class="attendance-card attendance-history">
+                <h3>Recent Attendance</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Status</th>
+                            <th>Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="record : ${attendanceRecords}">
+                            <td th:text="${#temporals.format(record.date, 'dd MMM yyyy')}"></td>
+                            <td th:text="${record.checkIn != null} ? ${#temporals.format(record.checkIn, 'hh:mm a')} : '-'"></td>
+                            <td th:text="${record.checkOut != null} ? ${#temporals.format(record.checkOut, 'hh:mm a')} : '-'"></td>
+                            <td th:text="${record.status}"></td>
+                            <td th:text="${record.hoursWorked != null} ? ${#numbers.formatDecimal(record.hoursWorked, 1, 2)} : '-'"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        document.getElementById('latitude').value = position.coords.latitude;
+                        document.getElementById('longitude').value = position.coords.longitude;
+                        document.forms[0].submit();
+                    },
+                    error => alert("Error getting location: " + error.message)
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+</body>
+</html>

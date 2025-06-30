@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #4b545c;
+        }
+        .sidebar-header h3 {
+            margin: 0;
+            color: #fff;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .sidebar-menu li {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .sidebar-menu li:hover {
+            background-color: #495057;
+        }
+        .sidebar-menu li.active {
+            background-color: #007bff;
+        }
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h2 {
+            color: #343a40;
+            margin: 0;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .stat-card h3 {
+            margin-top: 0;
+            color: #6c757d;
+            font-size: 16px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #343a40;
+            margin: 10px 0;
+        }
+        .stat-description {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .data-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .data-card h3 {
+            margin-top: 0;
+            color: #343a40;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .search-box {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Attendance System</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#">Dashboard</a></li>
+                <li><a href="#">Employees</a></li>
+                <li><a href="#">Attendance</a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Admin Dashboard</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span>Admin</span>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Employees</h3>
+                    <div class="stat-value" th:text="${totalEmployees}">0</div>
+                    <div class="stat-description">Active in system</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Present</h3>
+                    <div class="stat-value" th:text="${todayPresent}">0</div>
+                    <div class="stat-description">Employees checked in</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Absent</h3>
+                    <div class="stat-value" th:text="${todayAbsent}">0</div>
+                    <div class="stat-description">Employees not checked in</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Attendance Rate</h3>
+                    <div class="stat-value" th:text="${attendanceRate} + '%'">0%</div>
+                    <div class="stat-description">This month</div>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <div class="search-filter">
+                    <input type="text" class="search-box" placeholder="Search employees...">
+                    <select>
+                        <option>All Departments</option>
+                        <option>Development</option>
+                        <option>HR</option>
+                        <option>Management</option>
+                    </select>
+                </div>
+                <h3>Recent Attendance</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Status</th>
+                            <th>Hours</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="record : ${recentAttendance}">
+                            <td th:text="${record.employeeName}"></td>
+                            <td th:text="${#temporals.format(record.date, 'dd MMM yyyy')}"></td>
+                            <td th:text="${record.checkIn != null} ? ${#temporals.format(record.checkIn, 'hh:mm a')} : '-'"></td>
+                            <td th:text="${record.checkOut != null} ? ${#temporals.format(record.checkOut, 'hh:mm a')} : '-'"></td>
+                            <td th:text="${record.status}"></td>
+                            <td th:text="${record.hoursWorked != null} ? ${#numbers.formatDecimal(record.hoursWorked, 1, 2)} : '-'"></td>
+                            <td>
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="data-card">
+                <h3>Employee List</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.empId}"></td>
+                            <td th:text="${employee.name}"></td>
+                            <td th:text="${employee.email}"></td>
+                            <td th:text="${employee.role}"></td>
+                            <td>
+                                <span th:if="${employee.active}" style="color: green;">Active</span>
+                                <span th:unless="${employee.active}" style="color: red;">Inactive</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Deactivate</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
