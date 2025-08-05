@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Admin Dashboard</h1>
+        <button id="logout-btn">Logout</button>
+    </header>
+
+    <section class="powerbi-section">
+        <h2>Attendance Report</h2>
+        <p>Create a report in Power BI, publish it, and paste the embed iframe code below.</p>
+    </section>
+
+    <section>
+        <h2>Register New Employee</h2>
+        <form id="register-form">
+            <input type="text" id="firstName" placeholder="First Name" required>
+            <input type="text" id="lastName" placeholder="Last Name" required>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="text" id="designation" placeholder="Designation" required>
+            <button type="submit">Register</button>
+        </form>
+        <p id="register-message"></p>
+    </section>
+</div>
+<script src="admin.js"></script>
+</body>
+</html>
