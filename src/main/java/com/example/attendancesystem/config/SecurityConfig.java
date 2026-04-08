@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/").permitAll() // Allow auth endpoints and root
+                        .requestMatchers("/api/auth/**", "/", "/health").permitAll() // Allow auth endpoints and root
                         .requestMatchers("/*.html", "/*.css", "/*.js").permitAll() // Allow static files
                         .anyRequest().authenticated()
                 )
