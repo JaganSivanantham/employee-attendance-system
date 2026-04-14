@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/", "/health").permitAll() 
+                        .requestMatchers("/api/powerbi/**").permitAll()              
                         .requestMatchers("/*.html", "/*.css", "/*.js").permitAll() 
                         .anyRequest().authenticated()
                 )
