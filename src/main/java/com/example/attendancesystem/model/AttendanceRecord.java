@@ -16,5 +16,5 @@ public class AttendanceRecord {
     private LocalDate date;
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
-    private String status; // e.g., "PRESENT", "ABSENT"
+    private String status; 
 }
