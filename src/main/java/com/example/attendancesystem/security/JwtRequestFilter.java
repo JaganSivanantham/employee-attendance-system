@@ -1,6 +1,6 @@
 package com.example.attendancesystem.security;
 
-// ... imports ...
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +41,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             String role = (String) jwtUtil.extractClaim(jwt, claims -> claims.get("role"));
             List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 
-            // We don't need UserDetails object from DB as we trust the token.
-            // For validation, we just need the username.
+            
             if (jwtUtil.validateToken(jwt, new org.springframework.security.core.userdetails.User(username, "", authorities))) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         username, null, authorities);
